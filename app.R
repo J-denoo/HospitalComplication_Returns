@@ -12,7 +12,7 @@ df = df[df$Score != 'Not Available',]
 
 #df= tbl_df(df)
 
-df = select(df, c( 'Hospital.Name','City', 'State','Measure.Name','Measure.ID', 'Score'))
+df = select(df, c( 'Facility.Name','City', 'State','Measure.Name','Measure.ID', 'Score'))
 
 df = filter(df, Score != 'Not Available')
 
@@ -65,9 +65,9 @@ ui = fluidPage(
         column(2,
                selectInput("State", "Select a State:",  c('All', sort(unique(as.character(df$State))) )) ),
         column(4,
-               selectInput("hosp", "Select a Hospitals :", c('All', sort(unique(as.character(df$Hospital.Name)) )                          )) ),
+               selectInput("hosp", "Select a Hospitals :", c('All', sort(unique(as.character(df$Facility.Name)) )                          )) ),
         column(4,
-               selectInput("Cond", "Select a Condition:", c('All',sort( unique(as.character(df$'Measure.Name')))
+               selectInput("Cond", "Select a Condition:", c('All',sort( unique(as.character(df$Measure.Name)))
                ) ) ) ),
 
     fluidRow(column(2 ),
@@ -82,7 +82,7 @@ server = function(input, output, session) {
 
     observe({
         sel_State <- input$State
-        updateSelectInput(session, "hosp", choices = c("All",sort(as.character(df$Hospital.Name[df$State == sel_State ] ) )  )     )    }   )
+        updateSelectInput(session, "hosp", choices = c("All",sort(as.character(df$Facility.Name[df$State == sel_State ] ) )  )     )    }   )
 
 
     output$table <- DT::renderDataTable(DT::datatable ({
@@ -94,7 +94,7 @@ server = function(input, output, session) {
             data <- data[data$State == input$State,]
             data$State.av.Score = mean(data[data$Measure.Name == input$Cond ,]$Score)   }
         if (input$State != "All" & input$hosp != "All") {
-            data <- data[data$Hospital.Name == input$hosp,] }
+            data <- data[data$Facility.Name == input$hosp,] }
         if (input$Cond != "All") { data <- data[data$Measure.Name == input$Cond,]   }
 
         #  data$State.av.Score = round(data$State.av.Score,2)
